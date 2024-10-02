@@ -98,3 +98,8 @@ def get_dataset(dataset_name, preprocess, location, batch_size=128, num_workers=
         preprocess, location=location, batch_size=batch_size, num_workers=num_workers
     )
     return dataset
+
+
+if __name__ == '__main__':
+    print('asda')
+    print(registry)
