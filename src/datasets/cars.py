@@ -2,7 +2,6 @@ import os
 import torch
 import torchvision.datasets as datasets
 
-
 import pathlib
 from typing import Callable, Optional, Any, Tuple
 
@@ -35,12 +34,12 @@ class PytorchStanfordCars(VisionDataset):
             downloaded again."""
 
     def __init__(
-        self,
-        root: str,
-        split: str = "train",
-        transform: Optional[Callable] = None,
-        target_transform: Optional[Callable] = None,
-        download: bool = False,
+            self,
+            root: str,
+            split: str = "train",
+            transform: Optional[Callable] = None,
+            target_transform: Optional[Callable] = None,
+            download: bool = False,
     ) -> None:
 
         try:
@@ -91,7 +90,6 @@ class PytorchStanfordCars(VisionDataset):
         if self.target_transform is not None:
             target = self.target_transform(target)
         return pil_image, target
-
 
     def download(self) -> None:
         if self._check_exists():
