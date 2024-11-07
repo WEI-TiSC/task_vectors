@@ -40,7 +40,7 @@ def get_permuted_param(ps: PermutationSpec, perm, k: str, params, except_axis=No
     return w
 
 
-def vit_b_32_permutation_spec(num_layers: int=12) -> PermutationSpec:
+def vit_b_32_permutation_spec_MLP(num_layers: int=12) -> PermutationSpec:
     assert num_layers >= 1
     perm_spec = {}
     for layer_idx in range(num_layers):
@@ -62,7 +62,7 @@ def apply_permutation(ps: PermutationSpec, perm, params):
     return {k: get_permuted_param(ps, perm, k, params) for k in params.keys()}
 
 
-def weight_matching(rng, ps: PermutationSpec, params_a, params_b, max_iter=100):
+def weight_matching(rng, ps: PermutationSpec, params_a, params_b, max_iter=10):
     perm_sizes = {p: params_a[axes[0][0]].shape[axes[0][1]] for p, axes in ps.perm_to_axes.items()}
     perm = {p: jnp.arange(n) for p, n in perm_sizes.items()}
     perm_names = list(perm.keys())

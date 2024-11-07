@@ -30,11 +30,11 @@ free_rider_task_checkpoint = f'checkpoints/{model}/{free_rider_task}/finetuned.p
 victim_encoder = torch.load(victim_task_checkpoint)
 free_rider_encoder = torch.load(free_rider_task_checkpoint)
 
-victim_params = {name: param.clone() for name, param in victim_encoder.state_dict().items()}
-fr_params = {name: param.clone() for name, param in free_rider_encoder.state_dict().items()}
+victim_params = {name: param.clone() for name, param in victim_encoder.state_dict().items() if 'mlp.c' in name}
+fr_params = {name: param.clone() for name, param in free_rider_encoder.state_dict().items() if 'mlp.c' in name}
 
 # Weight matching
-perm_spec = wm.vit_b_32_permutation_spec(num_layers=12) # Do all layers
+perm_spec = wm.vit_b_32_permutation_spec_MLP(num_layers=12) # Do all layers but only MLP
 rng = random.PRNGKey(0)
 permutation, _, _, _ = wm.weight_matching(rng, perm_spec, victim_params, fr_params)
 permuted_victim_params = {k: torch.tentor(np.array(v)) for k, v in
