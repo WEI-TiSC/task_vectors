@@ -137,3 +137,6 @@ dmypy.json
 /add_reproduce.py
 /check_model_attributes.py
 /orthogonal_trans.py
+
+# Checkpoint
+*.pt

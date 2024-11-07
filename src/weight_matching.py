@@ -62,7 +62,7 @@ def apply_permutation(ps: PermutationSpec, perm, params):
     return {k: get_permuted_param(ps, perm, k, params) for k in params.keys()}
 
 
-def weight_matching(rng, ps: PermutationSpec, params_a, params_b, max_iter=10):
+def weight_matching(rng, ps: PermutationSpec, params_a, params_b, max_iter=50):
     perm_sizes = {p: params_a[axes[0][0]].shape[axes[0][1]] for p, axes in ps.perm_to_axes.items()}
     perm = {p: jnp.arange(n) for p, n in perm_sizes.items()}
     perm_names = list(perm.keys())
@@ -126,6 +126,6 @@ def interpolate_params(params_a, params_b, alpha):
 
 
 if __name__ == "__main__":
-    per = vit_b_32_permutation_spec(12)
+    per = vit_b_32_permutation_spec_MLP(12)
     for key in per.axes_to_perm.keys():
         print(key)
