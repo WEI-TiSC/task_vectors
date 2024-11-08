@@ -135,8 +135,10 @@ dmypy.json
 /figs/
 /img/
 /add_reproduce.py
-/check_model_attributes.py
 /orthogonal_trans.py
+/check_singular_value.py
+/environment.yml
 
 # Checkpoint
 *.pt
+/permuted models/

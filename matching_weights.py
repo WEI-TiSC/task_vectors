@@ -1,22 +1,15 @@
-import os
-import torch
 import numpy as np
-import seaborn as sns
-import torch.nn.functional as F
-import matplotlib.pyplot as plt
+import torch
 from jax import random
 
-
-from src.args import parse_arguments
-from src.task_vectors import TaskVector
-from src.eval import eval_single_dataset
 import src.weight_matching as wm
+from src.args import parse_arguments
 
 # Configs
-victim_task = 'MNIST'
-free_rider_task = 'EuroSAT'
+victim_task = 'DTD'
+free_rider_task = 'SVHN'
 model = 'ViT-B-32'
-vector_scaling_coef = 0.4
+vector_scaling_coef = 0.3
 
 args = parse_arguments()
 args.data_location = 'data'
@@ -49,5 +42,6 @@ permuted_victim_params = {name: param.clone() for name, param in victim_encoder.
 print(f"Evaluating Fine-tuned Source Performance on {victim_task}...")
 # source_info = eval_single_dataset(victim_encoder, victim_task, args)
 
-torch.save(victim_encoder, f'victim_{victim_task}_permuted.pt')
-victim_svd_checkpoint = f'victim_{victim_task}_permuted.pt'
+torch.save(victim_encoder, f'permuted models/white box/{model}/{victim_task}/'
+                           f'victim_{victim_task}_fr_{free_rider_task}_permuted.pt')
+# victim_svd_checkpoint = f'victim_{victim_task}_permuted.pt'
