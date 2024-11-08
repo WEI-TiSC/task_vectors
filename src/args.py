@@ -3,8 +3,34 @@ import argparse
 
 import torch
 
+
 def parse_arguments():
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--victim_task",
+        type=str,
+        default=None,
+        help='Define the victim task',
+    )
+    parser.add_argument(
+        "--free_rider_task",
+        type=str,
+        default=None,
+        help='Define the free-rider task',
+    )
+    parser.add_argument(
+        "--base_model",
+        type=str,
+        default=None,
+        help='Baseline model',
+    )
+    parser.add_argument(
+        "--scaling_coef",
+        type=float,
+        default=0.3,
+        help='Scaling factor in task arithmetic',
+    )
+    # Not used
     parser.add_argument(
         "--data-location",
         type=str,
@@ -100,7 +126,7 @@ def parse_arguments():
     )
     parsed_args = parser.parse_args()
     parsed_args.device = "cuda" if torch.cuda.is_available() else "cpu"
-    
+
     if parsed_args.load is not None and len(parsed_args.load) == 1:  # Only use first classifier.
         parsed_args.load = parsed_args.load[0]
     return parsed_args
