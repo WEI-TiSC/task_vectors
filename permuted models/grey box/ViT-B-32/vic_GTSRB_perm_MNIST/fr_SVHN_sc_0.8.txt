@@ -1,0 +1,5 @@
+{
+    "scaling coef": 0.8,
+    "GTSRB_TA_permuted": 0.03705463182897862,
+    "SVHN_TA_permuted": 0.1958743085433313
+}

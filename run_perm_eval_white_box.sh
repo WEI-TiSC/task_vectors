@@ -4,9 +4,9 @@
 #python check_model_attributes.py --victim_task SVHN --free_rider_task DTD --base_model ViT-B-32 --scaling_coef 0.8
 #python check_model_attributes.py --victim_task GTSRB --free_rider_task DTD --base_model ViT-B-32 --scaling_coef 0.8
 #python check_model_attributes.py --victim_task DTD --free_rider_task EuroSAT --base_model ViT-B-32 --scaling_coef 0.8
-python check_model_attributes.py --victim_task Cars --free_rider_task DTD --base_model ViT-B-32 --scaling_coef 0.8
+#python check_model_attributes.py --victim_task Cars --free_rider_task DTD --base_model ViT-B-32 --scaling_coef 0.8
 #python check_model_attributes.py --victim_task SUN397 --free_rider_task DTD --base_model ViT-B-32 --scaling_coef 0.8
-python check_model_attributes.py --victim_task RESISC45 --free_rider_task DTD --base_model ViT-B-32 --scaling_coef 0.8
+#python check_model_attributes.py --victim_task RESISC45 --free_rider_task DTD --base_model ViT-B-32 --scaling_coef 0.8
 
 
 # Run without benign/ permuted performance

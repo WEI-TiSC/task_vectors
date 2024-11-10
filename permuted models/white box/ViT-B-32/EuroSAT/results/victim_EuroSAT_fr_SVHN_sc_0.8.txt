@@ -1,0 +1,7 @@
+{
+    "scaling coef": 0.8,
+    "EuroSAT_TA": 0.9805555555555555,
+    "SVHN_TA": 0.9589735709895513,
+    "EuroSAT_TA_permuted": 0.30537037037037035,
+    "SVHN_TA_permuted": 0.1958743085433313
+}

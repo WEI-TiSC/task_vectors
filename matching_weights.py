@@ -14,12 +14,6 @@ if __name__ == "__main__":
     free_rider_task = args.free_rider_task
     model = args.base_model
 
-    # Configs
-    parsed_args = parse_arguments()
-    parsed_args.data_location = 'data'
-    parsed_args.model = model
-    parsed_args.save = f'checkpoints/{model}'
-
     victim_task_checkpoint = f'checkpoints/{model}/{victim_task}/finetuned.pt'  # Vector to be merged...
     pretrained_checkpoint = f'checkpoints/{model}/zeroshot.pt'  # Pre-trained checkpoint for T_source
     free_rider_task_checkpoint = f'checkpoints/{model}/{free_rider_task}/finetuned.pt'  # Theta_dest, who wants T_source

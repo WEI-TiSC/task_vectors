@@ -1,0 +1,5 @@
+{
+    "scaling coef": 0.8,
+    "GTSRB_TA_permuted": 0.025811559778305623,
+    "EuroSAT_TA_permuted": 0.2474074074074074
+}

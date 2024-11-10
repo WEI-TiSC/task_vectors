@@ -27,8 +27,14 @@ def parse_arguments():
     parser.add_argument(
         "--scaling_coef",
         type=float,
-        default=0.3,
+        default=0.8,
         help='Scaling factor in task arithmetic',
+    )
+    parser.add_argument(
+        "--perm_checkpoint",
+        type=str,
+        default=None,
+        help='Checkpoint used in permutation',
     )
     # Not used
     parser.add_argument(

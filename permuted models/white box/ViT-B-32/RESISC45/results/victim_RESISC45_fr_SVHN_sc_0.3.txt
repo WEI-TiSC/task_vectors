@@ -1,0 +1,7 @@
+{
+    "scaling coef": 0.3,
+    "RESISC45_TA": 0.8514285714285714,
+    "SVHN_TA": 0.8342808850645359,
+    "RESISC45_TA_permuted": 0.03698412698412699,
+    "SVHN_TA_permuted": 0.19525968039336203
+}

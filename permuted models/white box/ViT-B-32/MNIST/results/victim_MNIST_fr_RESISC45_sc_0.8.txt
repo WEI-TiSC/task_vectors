@@ -1,0 +1,7 @@
+{
+    "scaling coef": 0.8,
+    "MNIST_TA": 0.996,
+    "RESISC45_TA": 0.9061904761904762,
+    "MNIST_TA_permuted": 0.088,
+    "RESISC45_TA_permuted": 0.04793650793650794
+}

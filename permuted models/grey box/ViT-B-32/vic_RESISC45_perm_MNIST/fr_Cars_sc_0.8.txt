@@ -1,0 +1,5 @@
+{
+    "scaling coef": 0.8,
+    "RESISC45_TA_permuted": 0.04047619047619048,
+    "Cars_TA_permuted": 0.0053475935828877
+}

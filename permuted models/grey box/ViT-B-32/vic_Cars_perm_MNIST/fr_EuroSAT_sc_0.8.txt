@@ -1,0 +1,5 @@
+{
+    "scaling coef": 0.8,
+    "Cars_TA_permuted": 0.005471956224350205,
+    "EuroSAT_TA_permuted": 0.2064814814814815
+}
