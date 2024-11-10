@@ -20,3 +20,5 @@ out/
 !/permuted_models/white_box/**/results/*
 !/permuted_models/black_box/**/results/
 !/permuted_models/black_box/**/results/*
+/try.py
+/network_setting.py
