@@ -3,6 +3,8 @@
 # @file : check_model_attributes.py
 # @Time : 2024/11/6 14:26
 # Interpretation
+import os
+
 import torch
 import json
 
@@ -78,8 +80,10 @@ if __name__ == "__main__":
     results_dict[free_rider_task + '_TA_permuted'] = permuted_ta_fr_info['top1']
 
     # Save results
-    record = f'permuted models/white box/{model}/{victim_task}/results/'\
-             f'victim_{victim_task}_fr_{free_rider_task}_sc_{scaling_coef}.txt'
+    record_path = f'permuted models/white box/{model}/{victim_task}/results/'
+    os.makedirs(os.path.dirname(record_path), exist_ok=True)
+    record_name = f'victim_{victim_task}_fr_{free_rider_task}_sc_{scaling_coef}.txt'
+    record = os.path.join(record_path, record_name)
     with open(record, 'w') as f:
         json.dump(results_dict, f, indent=4)
     print(f"Results saved to {record}")
