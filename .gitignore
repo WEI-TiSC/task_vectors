@@ -12,11 +12,11 @@ out/
 
 # Checkpoint
 *.pt
-/permuted\ models/
+/permuted_models/
 
 
 # Whitelist
-!/permuted\ models/white\ box/**/results/
-!/permuted\ models/white\ box/**/results/*
-!/permuted\ models/black\ box/**/results/
-!/permuted\ models/black\ box/**/results/*
+!/permuted_models/white_box/**/results/
+!/permuted_models/white_box/**/results/*
+!/permuted_models/black_box/**/results/
+!/permuted_models/black_box/**/results/*

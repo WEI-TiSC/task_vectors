@@ -47,7 +47,6 @@ if __name__ == "__main__":
     victim_task = args.victim_task
     free_rider_task = args.free_rider_task
     model = args.base_model
-    vector_scaling_coef = args.scaling_coef
 
     # Configs
     parsed_args = parse_arguments()
