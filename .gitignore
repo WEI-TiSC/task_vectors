@@ -22,3 +22,5 @@ out/
 !/permuted_models/black_box/**/results/*
 /try.py
 /network_setting.py
+
+draw_white_grey_black_comp.py
