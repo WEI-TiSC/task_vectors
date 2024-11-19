@@ -62,7 +62,7 @@ def apply_permutation(ps: PermutationSpec, perm, params):
     return {k: get_permuted_param(ps, perm, k, params) for k in params.keys()}
 
 
-def weight_matching(rng, ps: PermutationSpec, params_a, params_b, max_iter=200):
+def weight_matching(rng, ps: PermutationSpec, params_a, params_b, max_iter=200, obj='dismatching'):
     perm_sizes = {p: params_a[axes[0][0]].shape[axes[0][1]] for p, axes in ps.perm_to_axes.items()}
     perm = {p: jnp.arange(n) for p, n in perm_sizes.items()}
     perm_names = list(perm.keys())
@@ -85,15 +85,28 @@ def weight_matching(rng, ps: PermutationSpec, params_a, params_b, max_iter=200):
                 w_b = jnp.moveaxis(w_b, axis, 0).reshape((n, -1))
                 A += w_a @ w_b.T
 
-            row_ind, col_ind = linear_sum_assignment(A, maximize=False)
-            oldL = jnp.vdot(A, jnp.eye(n)[perm[p]])
-            newL = jnp.vdot(A, jnp.eye(n)[col_ind, :])
-            if newL < oldL + 1e-12:
-                perm[p] = jnp.array(col_ind)
-                progress = True
-                counter = 0
+            if obj == 'dismatching':
+                row_ind, col_ind = linear_sum_assignment(A, maximize=False)
+                oldL = jnp.vdot(A, jnp.eye(n)[perm[p]])
+                newL = jnp.vdot(A, jnp.eye(n)[col_ind, :])
+                if newL < oldL + 1e-12:
+                    perm[p] = jnp.array(col_ind)
+                    progress = True
+                    counter = 0
+                else:
+                    counter += 1
+            elif obj == 'matching':
+                row_ind, col_ind = linear_sum_assignment(A, maximize=True)
+                oldL = jnp.vdot(A, jnp.eye(n)[perm[p]])
+                newL = jnp.vdot(A, jnp.eye(n)[col_ind, :])
+                if newL > oldL + 1e-12:
+                    perm[p] = jnp.array(col_ind)
+                    progress = True
+                    counter = 0
+                else:
+                    counter += 1
             else:
-                counter += 1
+                raise ValueError("Unknown matching objective!")
 
         if not progress and counter > 100:  # Over 100 times not improved
             break
