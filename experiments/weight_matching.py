@@ -40,18 +40,28 @@ def get_permuted_param(ps: PermutationSpec, perm, k: str, params, except_axis=No
     return w
 
 
-def vit_b_32_permutation_spec_MLP(num_layers: int=12) -> PermutationSpec:
+def vit_permutation_spec_MLP(num_layers: int=12) -> PermutationSpec:
     assert num_layers >= 1
     perm_spec = {}
     for layer_idx in range(num_layers):
         perm_spec.update({
-            # f"transformer.resblocks.{layer_idx}.attn.in_proj_weight": (f"P_{layer_idx}_0", None),
-            # f"transformer.resblocks.{layer_idx}.attn.out_proj.weight": (f"P_{layer_idx}_1", f"P_{layer_idx}_0"),
-            f"model.visual.transformer.resblocks.{layer_idx}.mlp.c_fc.weight": (f"P_{layer_idx}_1", None),
-            f"model.visual.transformer.resblocks.{layer_idx}.mlp.c_proj.weight": (None, f"P_{layer_idx}_1"),
-            # f"transformer.resblocks.{layer_idx}.attn.in_proj_bias": (f"P_{layer_idx}_0",),
-            # f"transformer.resblocks.{layer_idx}.attn.out_proj.bias": (f"P_{layer_idx}_1",),
-            f"model.visual.transformer.resblocks.{layer_idx}.mlp.c_fc.bias": (f"P_{layer_idx}_1",),
+            f"model.visual.transformer.resblocks.{layer_idx}.mlp.c_fc.weight": (f"P_{layer_idx}", None),
+            f"model.visual.transformer.resblocks.{layer_idx}.mlp.c_proj.weight": (None, f"P_{layer_idx}"),
+            f"model.visual.transformer.resblocks.{layer_idx}.mlp.c_fc.bias": (f"P_{layer_idx}",),
+            f"model.visual.transformer.resblocks.{layer_idx}.mlp.c_proj.bias": (None, ),
+        })
+
+    return permutation_spec_from_axes_to_perm(perm_spec)
+
+
+def vit_perm_partial_layers(layers: list[int]) -> PermutationSpec:
+    assert len(layers) >= 1
+    perm_spec = {}
+    for layer_idx in layers:
+        perm_spec.update({
+            f"model.visual.transformer.resblocks.{layer_idx}.mlp.c_fc.weight": (f"P_{layer_idx}", None),
+            f"model.visual.transformer.resblocks.{layer_idx}.mlp.c_proj.weight": (None, f"P_{layer_idx}"),
+            f"model.visual.transformer.resblocks.{layer_idx}.mlp.c_fc.bias": (f"P_{layer_idx}",),
             f"model.visual.transformer.resblocks.{layer_idx}.mlp.c_proj.bias": (None, ),
         })
 
@@ -67,7 +77,7 @@ def weight_matching(rng, ps: PermutationSpec, params_a, params_b, max_iter=200, 
     perm = {p: jnp.arange(n) for p, n in perm_sizes.items()}
     perm_names = list(perm.keys())
 
-    counter = 0
+    best_iter = 0
     similarity = []
     loss_interp, acc_interp = [], []
 
@@ -92,9 +102,7 @@ def weight_matching(rng, ps: PermutationSpec, params_a, params_b, max_iter=200, 
                 if newL < oldL + 1e-12:
                     perm[p] = jnp.array(col_ind)
                     progress = True
-                    counter = 0
-                else:
-                    counter += 1
+                    best_iter = iteration
             elif obj == 'matching':
                 row_ind, col_ind = linear_sum_assignment(A, maximize=True)
                 oldL = jnp.vdot(A, jnp.eye(n)[perm[p]])
@@ -102,13 +110,11 @@ def weight_matching(rng, ps: PermutationSpec, params_a, params_b, max_iter=200, 
                 if newL > oldL + 1e-12:
                     perm[p] = jnp.array(col_ind)
                     progress = True
-                    counter = 0
-                else:
-                    counter += 1
+                    best_iter = iteration
             else:
                 raise ValueError("Unknown matching objective!")
 
-        if not progress and counter > 100:  # Over 100 times not improved
+        if not progress and iteration - best_iter > 10:  # tolerance: 10 iterations
             break
 
     return {k: torch.tensor(np.array(v)) for k, v in perm.items()}, similarity, loss_interp, acc_interp
@@ -139,6 +145,6 @@ def interpolate_params(params_a, params_b, alpha):
 
 
 if __name__ == "__main__":
-    per = vit_b_32_permutation_spec_MLP(12)
+    per = vit_permutation_spec_MLP(12)
     for key in per.axes_to_perm.keys():
         print(key)

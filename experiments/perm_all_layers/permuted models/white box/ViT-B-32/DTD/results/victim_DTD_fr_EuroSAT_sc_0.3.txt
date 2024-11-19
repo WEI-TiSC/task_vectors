@@ -1,0 +1,7 @@
+{
+    "scaling coef": 0.3,
+    "DTD_TA": 0.6906847845521187,
+    "EuroSAT_TA": 0.9562962962962963,
+    "DTD_TA_permuted": 0.02610405864473449,
+    "EuroSAT_TA_permuted": 0.13703703703703704
+}

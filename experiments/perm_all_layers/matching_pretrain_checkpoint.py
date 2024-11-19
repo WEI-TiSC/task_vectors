@@ -1,7 +1,9 @@
 """
 Black box setting, only pretrain checkpoint is known.
 """
+import sys
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 import numpy as np
 import torch
@@ -27,7 +29,7 @@ if __name__ == "__main__":
     pt_params = {name: param.clone() for name, param in pretrained_encoder.state_dict().items() if 'mlp.c' in name}
 
     # Weight matching
-    perm_spec = wm.vit_b_32_permutation_spec_MLP(num_layers=12)  # Do all layers but only MLP
+    perm_spec = wm.vit_permutation_spec_MLP(num_layers=12)  # Do all layers but only MLP
     rng = random.PRNGKey(0)
     permutation, _, _, _ = wm.weight_matching(rng, perm_spec, victim_params, pt_params)
     permuted_victim_MLP_params = {k: torch.tensor(np.array(v)) for k, v in

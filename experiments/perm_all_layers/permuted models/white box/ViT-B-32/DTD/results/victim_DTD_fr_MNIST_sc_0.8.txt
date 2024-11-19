@@ -1,0 +1,7 @@
+{
+    "scaling coef": 0.8,
+    "DTD_TA": 0.8521365993205793,
+    "MNIST_TA": 0.997,
+    "DTD_TA_permuted": 0.03128911138923655,
+    "MNIST_TA_permuted": 0.0595
+}

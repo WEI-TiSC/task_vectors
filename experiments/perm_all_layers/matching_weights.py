@@ -1,4 +1,6 @@
+import sys
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 import numpy as np
 import torch
@@ -27,7 +29,7 @@ if __name__ == "__main__":
     fr_params = {name: param.clone() for name, param in free_rider_encoder.state_dict().items() if 'mlp.c' in name}
 
     # Weight matching
-    perm_spec = wm.vit_b_32_permutation_spec_MLP(num_layers=12)  # Do all layers but only MLP
+    perm_spec = wm.vit_permutation_spec_MLP(num_layers=12)  # Do all layers but only MLP
     rng = random.PRNGKey(0)
     permutation, _, _, _ = wm.weight_matching(rng, perm_spec, victim_params, fr_params)
     permuted_victim_MLP_params = {k: torch.tensor(np.array(v)) for k, v in

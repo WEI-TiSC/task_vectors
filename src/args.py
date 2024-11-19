@@ -36,6 +36,20 @@ def parse_arguments():
         default=None,
         help='Checkpoint used in permutation',
     )
+    parser.add_argument(
+        "--black_box",
+        type=bool,
+        default=False,
+        help='Whether perm from black box',
+    )
+    parser.add_argument(
+        "--perm_layers",
+        type=str,
+        default=None,
+        help='Layers to perm',
+    )
+
+
     # Not used
     parser.add_argument(
         "--data-location",
