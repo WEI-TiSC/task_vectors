@@ -14,6 +14,7 @@ out/
 *.pt
 /permuted_models/
 
+/.idea/
 
 # Whitelist
 !/permuted_models/white_box/**/results/
