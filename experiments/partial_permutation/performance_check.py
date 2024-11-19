@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     pretrained_checkpoint = f'checkpoints/{model}/zeroshot.pt'
     free_rider_task_checkpoint = f'checkpoints/{model}/{free_rider_task}/finetuned.pt'
-    victm_task_checkpoint_permuted = (f'experiments/partial_permutation/blackbox_perm_models/{victim_task}/'
+    victm_task_checkpoint_permuted = (f'experiments/partial_permutation/blackbox_perm_models/{model}/{victim_task}/'
                                       f'{perm_layer_num}_layers/{permed_layers}/partial_permuted.pt')
 
     # Load Model
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     results_dict[free_rider_task + '_TA_permuted'] = permuted_ta_fr_info['top1']
 
     # Save results
-    record_path = (f'experiments/partial_permutation/blackbox_perm_models/'
+    record_path = (f'experiments/partial_permutation/blackbox_perm_models/{model}/'
                    f'{victim_task}/{perm_layer_num}_layers/{permed_layers}/results/')
     os.makedirs(os.path.dirname(record_path), exist_ok=True)
     record_name = f'victim_{victim_task}_fr_{free_rider_task}_sc_{scaling_coef}.txt'
@@ -63,3 +63,6 @@ if __name__ == "__main__":
     with open(record, 'w') as f:
         json.dump(results_dict, f, indent=4)
     print(f"Results saved to {record}")
+
+
+# python .\experiments\partial_permutation\performance_check.py --victim_task MNIST --free_rider_task SVHN --base_model ViT-B-32 --perm_layers [0,1,2,3]

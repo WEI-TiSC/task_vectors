@@ -64,7 +64,7 @@ if __name__ == "__main__":
                         victim_params[layer]).any(), f"Tensors are equal for layer: {layer}"
 
     permed_layers = '_'.join(str(layer) for layer in layers)
-    save_path = (f'experiments/partial_permutation/blackbox_perm_models/{victim_task}/'
+    save_path = (f'experiments/partial_permutation/blackbox_perm_models/{model}/{victim_task}/'
                  f'{perm_layer_num}_layers/{permed_layers}/')
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     model_name = f'partial_permuted.pt'
@@ -72,5 +72,4 @@ if __name__ == "__main__":
     torch.save(victim_encoder, save_model)
     print(f"Model saved to {save_model}")
 
-
-    # python .\experiments\partial_permutation\partial_perms_black_box.py --victim_task MNIST --base_model ViT-B-32 --perm_layers [1,2,3]
+    # python .\experiments\partial_permutation\partial_perms_black_box.py --victim_task MNIST --base_model ViT-B-32 --perm_layers [0,1,2,3]
