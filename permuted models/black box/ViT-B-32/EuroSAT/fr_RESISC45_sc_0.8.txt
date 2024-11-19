@@ -1,0 +1,5 @@
+{
+    "scaling coef": 0.8,
+    "EuroSAT_TA_permuted": 0.22666666666666666,
+    "RESISC45_TA_permuted": 0.055396825396825396
+}

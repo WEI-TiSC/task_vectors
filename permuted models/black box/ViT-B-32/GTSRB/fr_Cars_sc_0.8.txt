@@ -1,0 +1,5 @@
+{
+    "scaling coef": 0.8,
+    "GTSRB_TA_permuted": 0.026761678543151226,
+    "Cars_TA_permuted": 0.004103967168262654
+}

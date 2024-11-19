@@ -1,0 +1,5 @@
+{
+    "scaling coef": 0.8,
+    "DTD_TA_permuted": 0.02467369926694082,
+    "RESISC45_TA_permuted": 0.03888888888888889
+}

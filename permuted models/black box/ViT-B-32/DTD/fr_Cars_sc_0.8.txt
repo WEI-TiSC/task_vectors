@@ -1,0 +1,5 @@
+{
+    "scaling coef": 0.8,
+    "DTD_TA_permuted": 0.03558018952261756,
+    "Cars_TA_permuted": 0.004974505658500186
+}
