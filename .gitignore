@@ -15,6 +15,7 @@ out/
 /permuted_models/
 
 /.idea/
+/__pycache__/
 
 # Whitelist
 !/permuted_models/white_box/**/results/
