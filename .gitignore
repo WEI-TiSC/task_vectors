@@ -26,3 +26,4 @@ out/
 /network_setting.py
 
 /experiments/perm_all_layers/cmp_black_grey_white/draw_white_grey_black_comp.py
+*.pyc
