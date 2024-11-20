@@ -67,4 +67,4 @@ if __name__ == "__main__":
     print(f"Results saved to {record}")
 
 
-# python .\experiments\adaptive_free_rider\check_adaptive_performance.py --victim_task MNIST --free_rider_task SVHN --base_model ViT-B-32
+# python experiments/adaptive_free_rider/check_adaptive_performance.py --victim_task MNIST --free_rider_task GTSRB --base_model ViT-B-32

@@ -1,6 +1,6 @@
 {
     "scaling coef": 0.8,
     "MNIST_reversed_single": 0.9969,
-    "MNIST_reversed_TA": 0.9926,
-    "GTSRB_reversed_TA": 0.8802058590657166
+    "MNIST_reversed_TA": 0.9927,
+    "GTSRB_reversed_TA": 0.9071258907363421
 }
