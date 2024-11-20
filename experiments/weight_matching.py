@@ -114,7 +114,7 @@ def weight_matching(rng, ps: PermutationSpec, params_a, params_b, max_iter=200, 
             else:
                 raise ValueError("Unknown matching objective!")
 
-        if not progress and iteration - best_iter > 10:  # tolerance: 20 iterations
+        if not progress and iteration - best_iter > 20:  # tolerance: 20 iterations
             break
 
     return {k: torch.tensor(np.array(v)) for k, v in perm.items()}, similarity, loss_interp, acc_interp
