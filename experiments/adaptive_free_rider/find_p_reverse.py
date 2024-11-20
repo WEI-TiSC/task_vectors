@@ -19,10 +19,10 @@ if __name__ == "__main__":
 
     free_rider_task_checkpoint = f'checkpoints/{model}/{free_rider_task}/finetuned.pt'
     if not black_box:
-        victm_task_checkpoint_permuted = (f'permuted models/white box/{model}/{victim_task}/'
+        victm_task_checkpoint_permuted = (f'experiments/perm_all_layers/permuted models/white box/{model}/{victim_task}/'
                                       f'victim_{victim_task}_fr_{free_rider_task}_permuted.pt')
     else:
-        victm_task_checkpoint_permuted = (f'permuted models/black box/{model}/{victim_task}/'
+        victm_task_checkpoint_permuted = (f'experiments/perm_all_layers/permuted models/black box/{model}/{victim_task}/'
                                           f'victim_{victim_task}_permuted.pt')
 
     # Load victim perm and free rider encoders
@@ -54,10 +54,7 @@ if __name__ == "__main__":
 
     save_path = f'experiments/adaptive_free_rider/{model}/vt_{victim_task}_fr_{free_rider_task}_reversed/'
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
-    if not black_box:
-        model_name = f'victim_{victim_task}_fr_{free_rider_task}_reversed.pt'
-    else:
-        model_name = f'victim_{victim_task}_reversed_blackbox.pt'
+    model_name = f'victim_{victim_task}_fr_{free_rider_task}_reversed.pt'
     save_model = os.path.join(save_path, model_name)
     torch.save(victim_perm_encoder, save_model)
     print(f"Model saved to {save_model}")

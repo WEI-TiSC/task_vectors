@@ -17,7 +17,6 @@ if __name__ == "__main__":
     free_rider_task = args.free_rider_task
     model = args.base_model
     scaling_coef = args.scaling_coef
-    black_box = args.black_box
 
     args.data_location = 'data'
     args.model = model
@@ -25,14 +24,9 @@ if __name__ == "__main__":
 
     pretrained_checkpoint = f'checkpoints/{model}/zeroshot.pt'
     free_rider_task_checkpoint = f'checkpoints/{model}/{free_rider_task}/finetuned.pt'
-    if not black_box:
-        victm_task_checkpoint_reversed = (f'experiments/adaptive_free_rider/{model}/'
-                                          f'vt_{victim_task}_fr_{free_rider_task}_reversed/'
-                                          f'victim_{victim_task}_fr_{free_rider_task}_reversed.pt')
-    else:
-        victm_task_checkpoint_reversed = (f'experiments/adaptive_free_rider/{model}/'
-                                          f'vt_{victim_task}_fr_{free_rider_task}_reversed/'
-                                          f'victim_{victim_task}_reversed_blackbox.pt')
+    victm_task_checkpoint_reversed = (f'experiments/adaptive_free_rider/{model}/'
+                                      f'vt_{victim_task}_fr_{free_rider_task}_reversed/'
+                                      f'victim_{victim_task}_fr_{free_rider_task}_reversed.pt')
 
     # Load Model
     victim_reversed_encoder = torch.load(victm_task_checkpoint_reversed)
@@ -66,14 +60,11 @@ if __name__ == "__main__":
     # Save results
     record_path = f'experiments/adaptive_free_rider/{model}/vt_{victim_task}_fr_{free_rider_task}_reversed/'
     os.makedirs(os.path.dirname(record_path), exist_ok=True)
-    if not black_box:
-        record_name = f'reversed_sc_{scaling_coef}.txt'
-    else:
-        record_name = f'blackbox_reversed_sc_{scaling_coef}.txt'
+    record_name = f'blackbox_reversed_sc_{scaling_coef}.txt'
     record = os.path.join(record_path, record_name)
     with open(record, 'w') as f:
         json.dump(results_dict, f, indent=4)
     print(f"Results saved to {record}")
 
 
-# python .\experiments\adaptive_free_rider\check_adaptive_performance.py --victim_task MNIST --free_rider_task SVHN --base_model ViT-B-32 --black_box True
+# python .\experiments\adaptive_free_rider\check_adaptive_performance.py --victim_task MNIST --free_rider_task SVHN --base_model ViT-B-32

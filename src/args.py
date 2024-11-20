@@ -39,7 +39,7 @@ def parse_arguments():
     parser.add_argument(
         "--black_box",
         type=bool,
-        default=False,
+        default=True,
         help='Whether perm from black box',
     )
     parser.add_argument(
