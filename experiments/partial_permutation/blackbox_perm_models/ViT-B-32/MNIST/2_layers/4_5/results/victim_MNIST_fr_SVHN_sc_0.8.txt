@@ -1,5 +1,5 @@
 {
     "scaling coef": 0.8,
-    "MNIST_TA_permuted": 0.9744,
-    "SVHN_TA_permuted": 0.7478872157344807
+    "MNIST_TA_permuted": 0.9746,
+    "SVHN_TA_permuted": 0.7481177012907191
 }
