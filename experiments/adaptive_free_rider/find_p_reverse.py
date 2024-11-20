@@ -62,4 +62,4 @@ if __name__ == "__main__":
     torch.save(victim_perm_encoder, save_model)
     print(f"Model saved to {save_model}")
 
-# python .\experiments\adaptive_free_rider\find_p_reverse.py --victim_task MNIST --free_rider_task SVHN --base_model VIT-B-32 --black_box True
+#  python experiments/adaptive_free_rider/find_p_reverse.py --victim_task MNIST --free_rider_task GTSRB --base_model VIT-B-32 --black_box True
