@@ -27,8 +27,11 @@ def finetune(args):
         return zs_path, ft_path
 
     assert train_dataset is not None, "Please provide a training dataset."
-    if args.load is not None and args.load.endswith('pt'):
-        image_encoder = ImageEncoder.load(args.load)
+    if args.load is not None and args.load[1].endswith('pt'):
+        # image_encoder = ImageEncoder.load(args.load)
+        print(f'Using existing image encoder... {args.load[1]}')
+        model_name, filename = args.load
+        image_encoder = ImageEncoder.load(model_name, filename)
     else:
         print('Building image encoder.')
         image_encoder = ImageEncoder(args, keep_lang=False)
@@ -111,8 +114,8 @@ def finetune(args):
     evaluate(image_encoder, args)
 
     if args.save is not None:
-        zs_path = os.path.join(ckpdir, 'zeroshot.pt')  
-        ft_path = os.path.join(ckpdir, 'finetuned.pt')
+        zs_path = os.path.join(ckpdir, 'zeroshot_perm.pt')
+        ft_path = os.path.join(ckpdir, 'finetuned_5round.pt')
         image_encoder.save(ft_path)
         return zs_path, ft_path
 

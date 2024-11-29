@@ -21,7 +21,7 @@ def parse_arguments():
     parser.add_argument(
         "--base_model",
         type=str,
-        default=None,
+        default='ViT-B-32',
         help='Baseline model',
     )
     parser.add_argument(
@@ -50,27 +50,26 @@ def parse_arguments():
     )
 
 
-    # Not used
     parser.add_argument(
         "--data-location",
         type=str,
-        default=os.path.expanduser('~/data'),  # 主路径下的data folder
+        default=os.path.expanduser('~/data'),
         help="The root directory for the datasets.",
     )
     parser.add_argument(
-        "--eval-datasets",  # eval用数据集，输入字符串用,分割
+        "--eval-datasets",
         default=None,
         type=lambda x: x.split(","),
         help="Which datasets to use for evaluation. Split by comma, e.g. MNIST,EuroSAT. "
     )
     parser.add_argument(
-        "--train-dataset",  # 同上
+        "--train-dataset",
         default=None,
         type=lambda x: x.split(","),
         help="Which dataset(s) to patch on.",
     )
     parser.add_argument(
-        "--exp_name",  # Useless for now
+        "--exp_name",
         type=str,
         default=None,
         help="Name of the experiment, for organization purposes only."
@@ -105,13 +104,13 @@ def parse_arguments():
         help="Weight decay"
     )
     parser.add_argument(
-        "--ls",  # Label smoothing (使用 label smoothing 时，目标标签不再是完全的 one-hot 向量，而是一个经过平滑处理的概率分布。)
+        "--ls",  # Label smoothing
         type=float,
         default=0.0,
         help="Label smoothing."
     )
     parser.add_argument(
-        "--warmup_length",  # What's this?
+        "--warmup_length",
         type=int,
         default=500,
     )
@@ -121,27 +120,28 @@ def parse_arguments():
         default=10,
     )
     parser.add_argument(
-        "--load",  # For efficient fine-tune?
+        "--load",
         type=lambda x: x.split(","),
-        default=None,
+        default='ViT-B-32,checkpoints/ViT-B-32/zeroshot_perm.pt',
         help="Optionally load _classifiers_, e.g. a zero shot classifier or probe or ensemble both.",
     )
     parser.add_argument(
-        "--save",  # Saver
+        "--save",
         type=str,
         default=None,
         help="Optionally save a _classifier_, e.g. a zero shot classifier or probe.",
     )
     parser.add_argument(
-        "--cache-dir",  # See help
+        "--cache-dir",
         type=str,
         default=None,
         help="Directory for caching features and encoder",
     )
     parser.add_argument(
-        "--openclip-cachedir",  # See help
+        "--openclip-cachedir",
         type=str,
-        default='/gscratch/efml/gamaga/.cache/open_clip',
+        # default='/gscratch/efml/gamaga/cache_dir/open_clip',
+        default='/home/dkss/GitHub/task_vectors/cache_dir/open_clip',
         help='Directory for caching models from OpenCLIP'
     )
     parsed_args = parser.parse_args()

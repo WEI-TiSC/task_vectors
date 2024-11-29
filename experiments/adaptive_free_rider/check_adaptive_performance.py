@@ -26,7 +26,7 @@ if __name__ == "__main__":
     free_rider_task_checkpoint = f'checkpoints/{model}/{free_rider_task}/finetuned.pt'
     victm_task_checkpoint_reversed = (f'experiments/adaptive_free_rider/{model}/'
                                       f'vt_{victim_task}_fr_{free_rider_task}_reversed/'
-                                      f'victim_{victim_task}_fr_{free_rider_task}_reversed.pt')
+                                      f'victim_{victim_task}_fr_{free_rider_task}_perm_ft_reversed.pt')
 
     # Load Model
     victim_reversed_encoder = torch.load(victm_task_checkpoint_reversed)
@@ -67,4 +67,4 @@ if __name__ == "__main__":
     print(f"Results saved to {record}")
 
 
-# python experiments/adaptive_free_rider/check_adaptive_performance.py --victim_task MNIST --free_rider_task GTSRB --base_model ViT-B-32
+# python experiments/adaptive_free_rider/check_adaptive_performance.py --victim_task MNIST --free_rider_task SVHN --base_model ViT-B-32

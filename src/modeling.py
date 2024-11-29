@@ -37,8 +37,8 @@ class ImageEncoder(torch.nn.Module):
     @classmethod
     def load(cls, model_name, filename):
         print(f'Loading image encoder from {filename}')
-        state_dict = torch.load(filename)
-        return cls.load(model_name, state_dict)
+        load_model = torch.load(filename)
+        return load_model
 
     @classmethod
     def load_from_state_dict(cls, model_name, state_dict):

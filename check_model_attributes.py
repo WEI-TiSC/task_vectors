@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-# Author : Junhao Wei
-# @file : check_model_attributes.py
-# @Time : 2024/11/6 14:26
-# Interpretation
 import os
 
 import torch
@@ -28,29 +23,30 @@ if __name__ == "__main__":
     victim_task_checkpoint = f'checkpoints/{model}/{victim_task}/finetuned.pt'
     pretrained_checkpoint = f'checkpoints/{model}/zeroshot.pt'
     free_rider_task_checkpoint = f'checkpoints/{model}/{free_rider_task}/finetuned.pt'
-    victm_task_checkpoint_permuted = (f'experiments/perm_all_layers/permuted models/white box/{model}/{victim_task}/'
-                                      f'victim_{victim_task}_fr_{free_rider_task}_permuted.pt')
+    # victim_task_checkpoint_permuted = (f'experiments/perm_all_layers/permuted models/white box/{model}/{victim_task}/'
+    #                                   f'victim_{victim_task}_fr_{free_rider_task}_permuted.pt')
+    victim_task_checkpoint_permuted = f'checkpoints/{model}/{victim_task}/finetuned_5round.pt'
 
     # Load Model
     victim_encoder = torch.load(victim_task_checkpoint)
-    victim_permuted_encoder = torch.load(victm_task_checkpoint_permuted)
+    victim_permuted_encoder = torch.load(victim_task_checkpoint_permuted)
     free_rider_encoder = torch.load(free_rider_task_checkpoint)
 
     results_dict = {'scaling coef': scaling_coef}
 
-    # # Evaluate benign performance
-    # print(f"Evaluating Fine-tuned Source Performance on victim: {victim_task}...")
-    # victim_info = eval_single_dataset(victim_encoder, victim_task, args)
-    # results_dict[victim_task + '_benign'] = victim_info['top1']
-    #
-    # # Evaluate permuted performance
-    # print(f"Evaluating Fine-tuned Source Performance on permuted victim: {victim_task}...")
-    # victim_permuted_info = eval_single_dataset(victim_permuted_encoder, victim_task, args)
-    # results_dict[victim_task + '_permuted'] = victim_permuted_info['top1']
+    # Evaluate benign performance
+    print(f"Evaluating Fine-tuned Source Performance on victim: {victim_task}...")
+    victim_info = eval_single_dataset(victim_encoder, victim_task, args)
+    results_dict[victim_task + '_benign'] = victim_info['top1']
+
+    # Evaluate permuted performance
+    print(f"Evaluating Fine-tuned Source Performance on permuted victim: {victim_task}...")
+    victim_permuted_info = eval_single_dataset(victim_permuted_encoder, victim_task, args)
+    results_dict[victim_task + '_permuted'] = victim_permuted_info['top1']
 
     # Generate task vector
     T_victim = TaskVector(pretrained_checkpoint, victim_task_checkpoint)
-    T_victim_permuted = TaskVector(pretrained_checkpoint, victm_task_checkpoint_permuted)
+    T_victim_permuted = TaskVector(pretrained_checkpoint, victim_task_checkpoint_permuted)
     T_free_rider = TaskVector(pretrained_checkpoint, free_rider_task_checkpoint)
 
     # Task arithmetic
@@ -80,10 +76,12 @@ if __name__ == "__main__":
     results_dict[free_rider_task + '_TA_permuted'] = permuted_ta_fr_info['top1']
 
     # Save results
-    record_path = f'permuted models/white box/{model}/{victim_task}/results/'
+    record_path = f'experiments/permFinetune/{model}/{victim_task}/results/'
     os.makedirs(os.path.dirname(record_path), exist_ok=True)
     record_name = f'victim_{victim_task}_fr_{free_rider_task}_sc_{scaling_coef}.txt'
     record = os.path.join(record_path, record_name)
     with open(record, 'w') as f:
         json.dump(results_dict, f, indent=4)
     print(f"Results saved to {record}")
+
+    # python check_model_attributes.py --victim_task MNIST --free_rider_task SVHN --base_model ViT-B-32
