@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     # Test perm_scale model
     victim_task_perm_scale_reversed = (f'experiments/adaptive_free_rider/{model}/perm_scale/'
-                                       f'vt_{victim_task}_fr_{free_rider_task}/victim_{victim_task}_perm_scale_reversed.pt')
+                                       f'vt_{victim_task}_fr_{free_rider_task}/victim_{victim_task}_perm_scale_attn_reversed.pt')
 
     # Load Model
     # victim_reversed_encoder = torch.load(victm_task_checkpoint_reversed)
