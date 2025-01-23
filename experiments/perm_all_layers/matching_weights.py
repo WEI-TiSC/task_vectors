@@ -1,5 +1,8 @@
 import sys
 import os
+
+from src.eval import eval_single_dataset
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 import numpy as np
@@ -34,6 +37,8 @@ if __name__ == "__main__":
     permutation, _, _, _ = wm.weight_matching(rng, perm_spec, victim_params, fr_params)
     permuted_victim_MLP_params = {k: torch.tensor(np.array(v)) for k, v in
                                   wm.apply_permutation(perm_spec, permutation, victim_params).items()}
+    for layer in range(12):
+        wm.apply_mlp_channel_scaling(permuted_victim_MLP_params, layer_idx=layer)
 
     # Update and save the permuted model
     full_victim_params = {name: param.clone() for name, param in victim_encoder.state_dict().items()}
@@ -46,6 +51,10 @@ if __name__ == "__main__":
             continue
         assert torch.ne(permuted_victim_params[layer],
                         victim_params[layer]).any(), f"Tensors are equal for layer: {layer}"
+
+    # Evaluate perm_scale performance
+    print(f"Evaluating Fine-tuned Source Performance on permuted victim: {victim_task}...")
+    victim_permuted_info = eval_single_dataset(victim_encoder, victim_task, args)
 
     save_path = f'permuted models/white box/{model}/{victim_task}/'
     os.makedirs(os.path.dirname(save_path), exist_ok=True)

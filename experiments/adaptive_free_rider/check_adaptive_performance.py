@@ -24,12 +24,22 @@ if __name__ == "__main__":
 
     pretrained_checkpoint = f'checkpoints/{model}/zeroshot.pt'
     free_rider_task_checkpoint = f'checkpoints/{model}/{free_rider_task}/finetuned.pt'
-    victm_task_checkpoint_reversed = (f'experiments/adaptive_free_rider/{model}/'
-                                      f'vt_{victim_task}_fr_{free_rider_task}_reversed/'
-                                      f'victim_{victim_task}_fr_{free_rider_task}_reversed.pt')
+    # victm_task_checkpoint_reversed = (f'experiments/adaptive_free_rider/{model}/'
+    #                                   f'vt_{victim_task}_fr_{free_rider_task}_reversed/'
+    #                                   f'victim_{victim_task}_fr_{free_rider_task}_reversed.pt')
+
+    # # # Test perm_prune model
+    # victm_task_checkpoint_reversed = (f'experiments/adaptive_free_rider/{model}/'
+    #                                   f'vt_{victim_task}_fr_{free_rider_task}_perm_prune_reversed/2025-01-09_11-19-28/'
+    #                                   f'victim_DTD_prune_attn_and_mlp.pt')
+
+    # Test perm_scale model
+    victim_task_perm_scale_reversed = (f'experiments/adaptive_free_rider/{model}/perm_scale/'
+                                       f'vt_{victim_task}_fr_{free_rider_task}/victim_{victim_task}_perm_scale_reversed.pt')
 
     # Load Model
-    victim_reversed_encoder = torch.load(victm_task_checkpoint_reversed)
+    # victim_reversed_encoder = torch.load(victm_task_checkpoint_reversed)
+    victim_reversed_encoder = torch.load(victim_task_perm_scale_reversed)
     free_rider_encoder = torch.load(free_rider_task_checkpoint)
 
     results_dict = {'scaling coef': scaling_coef}
@@ -40,7 +50,8 @@ if __name__ == "__main__":
     results_dict[victim_task + '_reversed_single'] = single_info['top1']
 
     # Generate task vector
-    T_victim_reversed = TaskVector(pretrained_checkpoint, victm_task_checkpoint_reversed)
+    # T_victim_reversed = TaskVector(pretrained_checkpoint, victm_task_checkpoint_reversed)
+    T_victim_reversed = TaskVector(pretrained_checkpoint, victim_task_perm_scale_reversed)
     T_free_rider = TaskVector(pretrained_checkpoint, free_rider_task_checkpoint)
 
     # Task arithmetic
@@ -58,8 +69,10 @@ if __name__ == "__main__":
     results_dict[free_rider_task + '_reversed_TA'] = reversed_ta_fr_info['top1']
 
     # Save results
-    record_path = f'experiments/adaptive_free_rider/{model}/vt_{victim_task}_fr_{free_rider_task}_reversed/'
+    # record_path = f'experiments/adaptive_free_rider/{model}/vt_{victim_task}_fr_{free_rider_task}_reversed/'
+    record_path = (f'experiments/adaptive_free_rider/{model}/perm_scale/vt_{victim_task}_fr_{free_rider_task}/')
     os.makedirs(os.path.dirname(record_path), exist_ok=True)
+    # record_name = f'blackbox_reversed_sc_{scaling_coef}.txt'
     record_name = f'blackbox_reversed_sc_{scaling_coef}.txt'
     record = os.path.join(record_path, record_name)
     with open(record, 'w') as f:
@@ -67,4 +80,4 @@ if __name__ == "__main__":
     print(f"Results saved to {record}")
 
 
-# python experiments/adaptive_free_rider/check_adaptive_performance.py --victim_task MNIST --free_rider_task GTSRB --base_model ViT-B-32
+# python experiments/adaptive_free_rider/check_adaptive_performance.py --victim_task MNIST --free_rider_task DTD --base_model ViT-B-32

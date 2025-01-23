@@ -1,0 +1,6 @@
+{
+    "scaling coef": 0.8,
+    "DTD_reversed_single": 0.8950473806543894,
+    "DTD_reversed_TA": 0.7537993920972644,
+    "MNIST_reversed_TA": 0.9965
+}

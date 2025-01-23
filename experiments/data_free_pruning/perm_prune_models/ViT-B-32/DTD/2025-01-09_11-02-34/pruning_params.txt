@@ -1,0 +1,5 @@
+Attention Pruning Ratios: 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5
+MLP Pruning Ratios: 0.1, 0.1, 0.15, 0.15, 0.15, 0.2, 0.2, 0.25, 0.25, 0.3, 0.35, 0.4
+Alpha: 2
+Beta: 1
+Tolerance: 0.98

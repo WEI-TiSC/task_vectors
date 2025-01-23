@@ -1,0 +1,6 @@
+{
+    "scaling coef": 0.8,
+    "MNIST_perm_scale": 0.0892,
+    "MNIST_TA_perm_scale": 0.0892,
+    "DTD_TA_perm_scale": 0.03397103522259968
+}
