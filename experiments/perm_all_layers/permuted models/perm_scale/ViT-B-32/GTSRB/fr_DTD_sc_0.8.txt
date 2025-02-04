@@ -1,0 +1,6 @@
+{
+    "scaling coef": 0.8,
+    "GTSRB_perm_scale": 0.9873317498020586,
+    "GTSRB_TA_perm_scale": 0.9803642121931908,
+    "DTD_TA_perm_scale": 0.8160200250312891
+}

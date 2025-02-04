@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     # Test perm_scale model
     victim_task_perm_scale_reversed = (f'experiments/adaptive_free_rider/{model}/perm_scale/'
-                                       f'vt_{victim_task}_fr_{free_rider_task}/victim_{victim_task}_perm_scale_attn_reversed.pt')
+                                       f'vt_{victim_task}_fr_{free_rider_task}/victim_{victim_task}_only_scale_attn_qkvw_reversed.pt')
 
     # Load Model
     # victim_reversed_encoder = torch.load(victm_task_checkpoint_reversed)
@@ -73,11 +73,11 @@ if __name__ == "__main__":
     record_path = (f'experiments/adaptive_free_rider/{model}/perm_scale/vt_{victim_task}_fr_{free_rider_task}/')
     os.makedirs(os.path.dirname(record_path), exist_ok=True)
     # record_name = f'blackbox_reversed_sc_{scaling_coef}.txt'
-    record_name = f'blackbox_reversed_sc_{scaling_coef}.txt'
+    record_name = f'blackbox_reversed_qkvw_sc_{scaling_coef}.txt'
     record = os.path.join(record_path, record_name)
     with open(record, 'w') as f:
         json.dump(results_dict, f, indent=4)
     print(f"Results saved to {record}")
 
 
-# python experiments/adaptive_free_rider/check_adaptive_performance.py --victim_task MNIST --free_rider_task DTD --base_model ViT-B-32
+# python experiments/adaptive_free_rider/check_adaptive_performance.py --victim_task GTSRB --free_rider_task DTD --base_model ViT-B-32 --scaling_coef 0.8

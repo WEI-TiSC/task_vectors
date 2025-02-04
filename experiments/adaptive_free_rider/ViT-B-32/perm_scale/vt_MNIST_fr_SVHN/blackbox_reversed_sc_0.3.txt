@@ -1,0 +1,6 @@
+{
+    "scaling coef": 0.3,
+    "MNIST_reversed_single": 0.9969,
+    "MNIST_reversed_TA": 0.765,
+    "SVHN_reversed_TA": 0.2505762138905962
+}

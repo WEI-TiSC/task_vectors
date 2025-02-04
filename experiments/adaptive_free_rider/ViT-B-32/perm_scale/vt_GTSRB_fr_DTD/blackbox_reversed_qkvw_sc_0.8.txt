@@ -1,0 +1,6 @@
+{
+    "scaling coef": 0.8,
+    "GTSRB_reversed_single": 0.9873317498020586,
+    "GTSRB_reversed_TA": 0.9789390340459224,
+    "DTD_reversed_TA": 0.718397997496871
+}

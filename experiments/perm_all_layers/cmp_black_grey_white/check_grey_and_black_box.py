@@ -33,8 +33,10 @@ if __name__ == "__main__":
     pretrained_checkpoint = f'checkpoints/{model}/zeroshot.pt'
     free_rider_task_checkpoint = f'checkpoints/{model}/{free_rider_task}/finetuned.pt'
     if perm_checkpoint == 'pretrain':  # Black box
+        # non_white_box_permuted_victim_checkpoint = (f'experiments/perm_all_layers/permuted models/perm_scale/'
+        #                                             f'{model}/{victim_task}/victim_{victim_task}_perm_scale_attn.pt')
         non_white_box_permuted_victim_checkpoint = (f'experiments/perm_all_layers/permuted models/perm_scale/'
-                                                    f'{model}/{victim_task}/victim_{victim_task}_perm_scale_attn.pt')
+                                                    f'{model}/{victim_task}/victim_{victim_task}_only_scale_attn_qkvw.pt')
     else:  # Grey box
         # non_white_box_permuted_victim_checkpoint = (f'permuted models/white box/{model}/{victim_task}/'
         #                                   f'victim_{victim_task}_fr_{perm_checkpoint}_permuted.pt')
@@ -83,5 +85,4 @@ if __name__ == "__main__":
         json.dump(results_dict, f, indent=4)
     print(f"Results saved to {record}")
 
-
-# python experiments/perm_all_layers/cmp_black_grey_white/check_grey_and_black_box.py --victim_task MNIST --free_rider_task DTD --base_model ViT-B-32 --perm_checkpoint pretrain
+# python experiments/perm_all_layers/cmp_black_grey_white/check_grey_and_black_box.py --victim_task GTSRB --free_rider_task DTD --base_model ViT-B-32  --scaling_coef 0.8

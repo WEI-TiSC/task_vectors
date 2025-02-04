@@ -425,12 +425,18 @@ def apply_mlp_channel_scaling(
     return W_fc, b_fc, W_proj
 
 
+import torch
+import random
+import numpy as np
+
+
 def apply_attention_qk_scaling(
         params: dict,
         layer_idx: int,
-        scale_min: float = 0.5,
-        scale_max: float = 2.0,
-        rng=None
+        scale_min: float = 0.05,
+        scale_max: float = 20.0,
+        rng=None,
+        mode="log_uniform"  # 可选: "log_uniform" 或 "beta"
 ):
     """
     在指定的 resblock Attention(第 layer_idx 层)上，对 Q 和 K 分别进行正系数互反缩放，
@@ -446,11 +452,14 @@ def apply_attention_qk_scaling(
     scale_min, scale_max: float
         alpha[i] 的随机取值范围 [scale_min, scale_max]
     rng:
-        可选的随机数发生器, 若不传则用 Python 自带 random
+        可选的随机数发生器, 若不传则用 Python 原生 random
+    mode: str
+        "log_uniform" - 采用对数均匀采样，使值更偏向 scale_min 或 scale_max
+        "beta" - 采用 Beta 分布采样，让数值远离中心区域
 
     使用示例:
     --------
-        apply_attention_qk_scaling(params, layer_idx=3, scale_min=0.8, scale_max=1.2)
+        apply_attention_qk_scaling(params, layer_idx=3, scale_min=0.5, scale_max=20.0, mode="log_uniform")
     """
 
     key_in_proj_weight = f"model.visual.transformer.resblocks.{layer_idx}.attn.in_proj_weight"
@@ -463,30 +472,139 @@ def apply_attention_qk_scaling(
     Q_weight, K_weight, V_weight = W_in_proj[:d_k, :], W_in_proj[d_k:2 * d_k, :], W_in_proj[2 * d_k:, :]
     Q_bias, K_bias, V_bias = b_in_proj[:d_k], b_in_proj[d_k:2 * d_k], b_in_proj[2 * d_k:]
 
-    if rng is None:
-        alpha = torch.empty(d_k)
-        for i in range(d_k):
-            a = random.random()  # [0,1)
-            val = scale_min + a * (scale_max - scale_min)
-            alpha[i] = val
-    else:
-        alpha = (scale_min + (scale_max - scale_min) * torch.rand(d_k, generator=rng))
+    # 生成 alpha[i]，保证采样更偏向极端值
+    if mode == "log_uniform":
+        if rng is None:
+            alpha = torch.exp(torch.empty(d_k).uniform_(np.log(scale_min), np.log(scale_max)))  # log-uniform 采样
+        else:
+            alpha = torch.exp(
+                (np.log(scale_min) + (np.log(scale_max) - np.log(scale_min)) * torch.rand(d_k, generator=rng)))
 
+    elif mode == "beta":
+        a, b = 0.5, 0.5  # Beta(0.5, 0.5) 使得采样更偏向两端
+        if rng is None:
+            alpha = scale_min + (scale_max - scale_min) * torch.tensor(np.random.beta(a, b, size=d_k))
+        else:
+            alpha = scale_min + (scale_max - scale_min) * torch.distributions.Beta(a, b).sample((d_k,))
+
+    else:
+        raise ValueError("Unsupported mode. Use 'log_uniform' or 'beta'.")
+
+    # 对 Q 进行正系数缩放
     for i in range(d_k):
         Q_weight[i, :] *= alpha[i]
         Q_bias[i] *= alpha[i]
 
+    # 对 K 进行反向缩放
     for i in range(d_k):
         K_weight[i, :] *= (1.0 / alpha[i])
         K_bias[i] *= (1.0 / alpha[i])
 
+    # 合并回 in_proj_weight
     W_in_proj[:d_k, :] = Q_weight
     W_in_proj[d_k:2 * d_k, :] = K_weight
     b_in_proj[:d_k] = Q_bias
     b_in_proj[d_k:2 * d_k] = K_bias
 
+    # 写回参数
     params[key_in_proj_weight] = W_in_proj
     params[key_in_proj_bias] = b_in_proj
+
+    return params
+
+
+def apply_attention_qkvw_scaling(
+        params: dict,
+        layer_idx: int,
+        scale_min: float = 0.5,
+        scale_max: float = 20.0,
+        rng=None,
+        mode="log_uniform"  # 可选: "log_uniform" 或 "beta"
+):
+    """
+    在指定的 resblock Attention(第 layer_idx 层)上，对 Q、K、V 及输出投影 W_O 进行正系数缩放，
+    保证整个 Multi-Head Self-Attention (MHA) 计算过程保持等价。
+
+    参数:
+    ----
+    params: dict
+        存放模型权重的字典, 例如 { 'model.visual.transformer.resblocks.0.attn.in_proj_weight': Tensor, ... }
+    layer_idx: int
+        要操作的第几层 resblock 索引,
+        对应 "model.visual.transformer.resblocks.{layer_idx}.attn.in_proj_weight" 等键
+    scale_min, scale_max: float
+        alpha[i] 的随机取值范围 [scale_min, scale_max]
+    rng:
+        可选的随机数发生器, 若不传则用 Python 原生 random
+    mode: str
+        "log_uniform" - 采用对数均匀采样，使值更偏向 scale_min 或 scale_max
+        "beta" - 采用 Beta 分布采样，让数值远离中心区域
+
+    使用示例:
+    --------
+        apply_attention_scaling(params, layer_idx=3, scale_min=0.5, scale_max=20.0, mode="log_uniform")
+    """
+
+    # 1. 获取 Q, K, V 的权重参数
+    key_in_proj_weight = f"model.visual.transformer.resblocks.{layer_idx}.attn.in_proj_weight"
+    key_in_proj_bias = f"model.visual.transformer.resblocks.{layer_idx}.attn.in_proj_bias"
+    key_out_proj_weight = f"model.visual.transformer.resblocks.{layer_idx}.attn.out_proj.weight"
+
+    W_in_proj = params[key_in_proj_weight]  # [3 * d_k, d_model]
+    b_in_proj = params[key_in_proj_bias]  # [3 * d_k]
+    W_out_proj = params[key_out_proj_weight]  # [d_model, d_model]
+
+    d_k = W_in_proj.shape[0] // 3  # 每个头的维度
+    Q_weight, K_weight, V_weight = W_in_proj[:d_k, :], W_in_proj[d_k:2 * d_k, :], W_in_proj[2 * d_k:, :]
+    Q_bias, K_bias, V_bias = b_in_proj[:d_k], b_in_proj[d_k:2 * d_k], b_in_proj[2 * d_k:]
+
+    # 2. 生成 alpha[i] 确保采样更偏向极端值
+    if mode == "log_uniform":
+        if rng is None:
+            alpha = torch.exp(torch.empty(d_k).uniform_(np.log(scale_min), np.log(scale_max)))  # log-uniform 采样
+        else:
+            alpha = torch.exp(
+                (np.log(scale_min) + (np.log(scale_max) - np.log(scale_min)) * torch.rand(d_k, generator=rng)))
+
+    elif mode == "beta":
+        a, b = 0.5, 0.5  # Beta(0.5, 0.5) 使得采样更偏向两端
+        if rng is None:
+            alpha = scale_min + (scale_max - scale_min) * torch.tensor(np.random.beta(a, b, size=d_k))
+        else:
+            alpha = scale_min + (scale_max - scale_min) * torch.distributions.Beta(a, b).sample((d_k,))
+    else:
+        raise ValueError("Unsupported mode. Use 'log_uniform' or 'beta'.")
+
+    # 3. 对 Q 进行正系数缩放
+    for i in range(d_k):
+        Q_weight[i, :] *= alpha[i]
+        Q_bias[i] *= alpha[i]
+
+    # 4. 对 K 进行反向缩放
+    for i in range(d_k):
+        K_weight[i, :] *= (1.0 / alpha[i])
+        K_bias[i] *= (1.0 / alpha[i])
+
+    # 5. 对 V 进行正系数缩放
+    for i in range(d_k):
+        V_weight[i, :] *= alpha[i]
+        V_bias[i] *= alpha[i]
+
+    # 6. 对输出投影 W_O 进行反向缩放
+    for i in range(d_k):
+        W_out_proj[:, i] *= (1.0 / alpha[i])
+
+    # 7. 写回 in_proj_weight 和 out_proj_weight
+    W_in_proj[:d_k, :] = Q_weight
+    W_in_proj[d_k:2 * d_k, :] = K_weight
+    W_in_proj[2 * d_k:, :] = V_weight
+    b_in_proj[:d_k] = Q_bias
+    b_in_proj[d_k:2 * d_k] = K_bias
+    b_in_proj[2 * d_k:] = V_bias
+
+    params[key_in_proj_weight] = W_in_proj
+    params[key_in_proj_bias] = b_in_proj
+    params[key_out_proj_weight] = W_out_proj
 
     return params
 

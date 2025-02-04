@@ -38,6 +38,8 @@ if __name__ == "__main__":
     #                                     f'2025-01-09_11-19-28/victim_DTD_perm_prune_attn_and_mlp.pt')
     victim_task_checkpoint_perm_scale = (f'experiments/perm_all_layers/permuted models/perm_scale/{model}/{victim_task}/'
                                          f'victim_{victim_task}_perm_scale_attn.pt')
+    victim_task_checkpoint_perm_scale = (f'experiments/perm_all_layers/permuted models/perm_scale/{model}/{victim_task}/'
+                                         f'victim_{victim_task}_perm_scale_attn_qkvw.pt')
 
     # Load victim perm and free rider encoders
     # victim_perm_encoder = torch.load(victm_task_checkpoint_permuted)
@@ -68,9 +70,9 @@ if __name__ == "__main__":
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     # model_name = f'victim_{victim_task}_fr_{free_rider_task}_reversed.pt'
     # model_name = f'victim_DTD_prune_attn_and_mlp.pt'
-    model_name = f'victim_{victim_task}_perm_scale_attn_reversed.pt'
+    model_name = f'victim_{victim_task}_perm_scale_attn_qkvw_reversed.pt'
     save_model = os.path.join(save_path, model_name)
     torch.save(victim_perm_encoder, save_model)
     print(f"Model saved to {save_model}")
 
-#  python experiments/adaptive_free_rider/find_p_reverse.py --victim_task MNIST --free_rider_task DTD --base_model ViT-B-32
+#  python experiments/adaptive_free_rider/find_p_reverse.py --victim_task GTSRB --free_rider_task DTD --base_model ViT-B-32

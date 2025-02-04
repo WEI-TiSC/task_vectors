@@ -20,7 +20,7 @@ if __name__ == "__main__":
     args = parse_arguments()
     # victim_task = args.victim_task
     # model = args.base_model
-    victim_task = 'MNIST'
+    victim_task = 'GTSRB'
     model = 'ViT-B-32'
 
     args.data_location = 'data'
@@ -54,16 +54,20 @@ if __name__ == "__main__":
 
     # Update and save the permuted model
     full_victim_params = {name: param.clone() for name, param in victim_encoder.state_dict().items()}
-    full_victim_params.update(permuted_victim_MLP_params)
+    # full_victim_params.update(permuted_victim_MLP_params)
 
     # Update params
     victim_encoder.load_state_dict(full_victim_params)
 
     for layer in range(12):  # scaling in attn
-        full_victim_params = wm.apply_attention_qk_scaling(full_victim_params,
+        # full_victim_params = wm.apply_attention_qk_scaling(full_victim_params,
+        #                                                     layer_idx=layer,
+        #                                                     scale_min=0.03,
+        #                                                     scale_max=30)
+        full_victim_params = wm.apply_attention_qkvw_scaling(full_victim_params,
                                                             layer_idx=layer,
-                                                            scale_min=20,
-                                                            scale_max=21)
+                                                            scale_min=0.20,
+                                                            scale_max=5)
 
     permuted_victim_params = {name: param.clone() for name, param in victim_encoder.state_dict().items()
                               # if 'mlp.c' in name or 'attn.in_proj' in name}
@@ -86,7 +90,9 @@ if __name__ == "__main__":
 
     save_path = f'experiments/perm_all_layers/permuted models/perm_scale/{model}/{victim_task}/'
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
-    model_name = f'victim_{victim_task}_perm_scale_attn.pt'
+    # model_name = f'victim_{victim_task}_perm_scale_attn.pt'
+    # model_name = f'victim_{victim_task}_perm_scale_attn_qkvw.pt'
+    model_name = f'victim_{victim_task}_only_scale_attn_qkvw.pt'
     save_model = os.path.join(save_path, model_name)
     torch.save(victim_encoder, save_model)
     print(f"Model saved to {save_model}")
