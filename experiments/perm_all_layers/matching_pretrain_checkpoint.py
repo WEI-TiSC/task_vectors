@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     # Update and save the permuted model
     full_victim_params = {name: param.clone() for name, param in victim_encoder.state_dict().items()}
-    # full_victim_params.update(permuted_victim_MLP_params)
+    full_victim_params.update(permuted_victim_MLP_params)
 
     # Update params
     victim_encoder.load_state_dict(full_victim_params)
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     # model_name = f'victim_{victim_task}_perm_scale_attn.pt'
     # model_name = f'victim_{victim_task}_perm_scale_attn_qkvw.pt'
-    model_name = f'victim_{victim_task}_only_scale_attn_qkvw.pt'
+    model_name = f'victim_{victim_task}_perm_scale_attn_qkvw.pt'
     save_model = os.path.join(save_path, model_name)
     torch.save(victim_encoder, save_model)
     print(f"Model saved to {save_model}")

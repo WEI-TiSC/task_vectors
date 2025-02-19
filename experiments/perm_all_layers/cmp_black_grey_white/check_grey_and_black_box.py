@@ -36,7 +36,7 @@ if __name__ == "__main__":
         # non_white_box_permuted_victim_checkpoint = (f'experiments/perm_all_layers/permuted models/perm_scale/'
         #                                             f'{model}/{victim_task}/victim_{victim_task}_perm_scale_attn.pt')
         non_white_box_permuted_victim_checkpoint = (f'experiments/perm_all_layers/permuted models/perm_scale/'
-                                                    f'{model}/{victim_task}/victim_{victim_task}_only_scale_attn_qkvw.pt')
+                                                    f'{model}/{victim_task}/victim_{victim_task}_perm_scale_attn_qkvw.pt')
     else:  # Grey box
         # non_white_box_permuted_victim_checkpoint = (f'permuted models/white box/{model}/{victim_task}/'
         #                                   f'victim_{victim_task}_fr_{perm_checkpoint}_permuted.pt')

@@ -3,7 +3,9 @@ We do not consider white- or grey- box anymore for extra assumptions.
 """
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+work_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+os.chdir(work_dir)
+sys.path.append(work_dir)
 
 import numpy as np
 import torch
@@ -15,15 +17,15 @@ from src.args import parse_arguments
 
 if __name__ == "__main__":
     args = parse_arguments()
-    victim_task = args.victim_task
-    model = args.base_model
-    layers = eval(args.perm_layers)
-    perm_layer_num = len(layers)
-
-    # victim_task = 'MNIST'
-    # model = 'ViT-B-32'
-    # layers = [0]
+    # victim_task = args.victim_task
+    # model = args.base_model
+    # layers = eval(args.perm_layers)
     # perm_layer_num = len(layers)
+
+    victim_task = 'MNIST'
+    model = 'ViT-B-32'
+    layers = [0,1,2,3,4,5,6]
+    perm_layer_num = len(layers)
     #
     # victim_task_checkpoint = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
     #                                       'checkpoints', model, victim_task, 'finetuned.pt')
@@ -47,6 +49,9 @@ if __name__ == "__main__":
     perm_spec = wm.vit_perm_partial_layers(layers=layers)  # Some layers only
     rng = random.PRNGKey(0)
     permutation, _, _, _ = wm.weight_matching(rng, perm_spec, victim_params, pt_params)
+    torch.save(permutation, "permutation_dict.pt")
+
+    # Apply permutation
     permuted_victim_MLP_params = {k: torch.tensor(np.array(v)) for k, v in
                                   wm.apply_permutation(perm_spec, permutation, victim_params).items()}
 
@@ -72,4 +77,4 @@ if __name__ == "__main__":
     torch.save(victim_encoder, save_model)
     print(f"Model saved to {save_model}")
 
-    # python .\experiments\partial_permutation\partial_perms_black_box.py --victim_task MNIST --base_model ViT-B-32 --perm_layers [0,1,2,3]
+    # python .\experiments\partial_permutation\partial_perms_black_box.py --victim_task MNIST --base_model ViT-B-32 --perm_layers [0,1,2,3,4,5,6]

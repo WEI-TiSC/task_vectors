@@ -36,14 +36,17 @@ if __name__ == "__main__":
     #                                       f'victim_{victim_task}_permuted.pt')
     # victm_task_checkpoint_perm_prune = (f'experiments/data_free_pruning/perm_prune_models/{model}/{victim_task}/'
     #                                     f'2025-01-09_11-19-28/victim_DTD_perm_prune_attn_and_mlp.pt')
-    victim_task_checkpoint_perm_scale = (f'experiments/perm_all_layers/permuted models/perm_scale/{model}/{victim_task}/'
-                                         f'victim_{victim_task}_perm_scale_attn.pt')
+    # victim_task_checkpoint_perm_scale = (f'experiments/perm_all_layers/permuted models/perm_scale/{model}/{victim_task}/'
+    #                                      f'victim_{victim_task}_perm_scale_attn.pt')
     victim_task_checkpoint_perm_scale = (f'experiments/perm_all_layers/permuted models/perm_scale/{model}/{victim_task}/'
                                          f'victim_{victim_task}_perm_scale_attn_qkvw.pt')
+    # vic_partial_perm = ('experiments/partial_permutation/blackbox_perm_models/ViT-B-32/MNIST'
+    #                     '/7_layers/0_1_2_3_4_5_6/partial_permuted.pt')
 
     # Load victim perm and free rider encoders
     # victim_perm_encoder = torch.load(victm_task_checkpoint_permuted)
     # victim_perm_encoder = torch.load(victm_task_checkpoint_perm_prune)
+    # victim_perm_encoder = torch.load(victim_task_checkpoint_perm_scale)
     victim_perm_encoder = torch.load(victim_task_checkpoint_perm_scale)
     free_rider_encoder = torch.load(free_rider_task_checkpoint)
 
@@ -55,6 +58,9 @@ if __name__ == "__main__":
     reversed_perm_spec = wm.vit_permutation_spec_MLP(num_layers=12)
     rng = random.PRNGKey(0)
     permutation, _, _, _ = wm.weight_matching(rng, reversed_perm_spec, victim_perm_params, fr_params, obj='matching')
+    torch.save(permutation, "reversed_permutation_dict.pt")
+
+    # Reverse the permutation
     reversed_victim_MLP_params = {k: torch.tensor(np.array(v)) for k, v in
                                   wm.apply_permutation(reversed_perm_spec, permutation, victim_perm_params).items()}
 
@@ -69,7 +75,7 @@ if __name__ == "__main__":
     save_path = f'experiments/adaptive_free_rider/{model}/perm_scale/vt_{victim_task}_fr_{free_rider_task}/'
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     # model_name = f'victim_{victim_task}_fr_{free_rider_task}_reversed.pt'
-    # model_name = f'victim_DTD_prune_attn_and_mlp.pt'
+    # model_name = f'vic_partial_perm.pt'
     model_name = f'victim_{victim_task}_perm_scale_attn_qkvw_reversed.pt'
     save_model = os.path.join(save_path, model_name)
     torch.save(victim_perm_encoder, save_model)
